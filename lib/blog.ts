@@ -1,4 +1,3 @@
-// lib/blogs.ts
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
@@ -14,8 +13,6 @@ export type BlogFrontmatter = {
   readingTime: number;
   tags: string[];
 };
-
-
 
 export function getAllBlogs(): BlogFrontmatter[] {
   const files = fs.readdirSync(BLOG_PATH).filter(file => file.endsWith(".mdx"));

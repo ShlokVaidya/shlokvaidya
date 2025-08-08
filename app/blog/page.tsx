@@ -1,5 +1,5 @@
 import { getAllBlogs } from "@/lib/blog";
-import BlogList from "@/components/blog/BlogList";
+import List from "@/components/blog/List";
 
 export const metadata = {
   title: "Blog",
@@ -12,7 +12,7 @@ export default async function BlogPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
       <h1 className="text-4xl font-bold mb-6">Blogs</h1>
-      <BlogList blogs={blogs} />
+      <List blogs={blogs} />
     </div>
   );
 }

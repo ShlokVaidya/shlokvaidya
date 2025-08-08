@@ -11,10 +11,23 @@ export type BlogFrontmatter = {
   summary: string;
   slug: string;
   publishedAt: string;
-  coverImage: string; // ✅ make required
+  coverImage: string;
   readingTime: number;
   tags: string[];
 };
+
+const PROJECT_PATH = path.join(process.cwd(), "content/projects");
+
+export type ProjectFrontmatter = {
+  title: string;
+  summary: string;
+  slug: string;
+  publishedAt: string;
+  coverImage: string;
+  readingTime: number;
+  tags: string[];
+};
+
 export async function getBlogBySlug(slug: string) {
   const files = fs.readdirSync(BLOG_PATH).filter((f) => f.endsWith(".mdx"));
   const slugs = files.map((f) => f.replace(/\.mdx?$/, ""));
@@ -43,7 +56,43 @@ export async function getBlogBySlug(slug: string) {
 
   return {
     meta: {
-      /* eslint-disable  @typescript-eslint/no-explicit-any */
+      ...(data as any),
+      slug,
+    },
+    content: mdx.content,
+    prev,
+    next,
+  };
+}
+
+export async function getProjectBySlug(slug: string) {
+  const files = fs.readdirSync(PROJECT_PATH).filter((f) => f.endsWith(".mdx"));
+  const slugs = files.map((f) => f.replace(/\.mdx?$/, ""));
+  const index = slugs.indexOf(slug);
+
+  const getMeta = (targetSlug: string | null) => {
+    if (!targetSlug) return null;
+    const filePath = path.join(PROJECT_PATH, `${targetSlug}.mdx`);
+    const source = fs.readFileSync(filePath, "utf8");
+    const { data } = matter(source);
+    return {
+      slug: targetSlug,
+      title: data.title,
+      summary: data.summary,
+    };
+  };
+
+  const prev = index > 0 ? getMeta(slugs[index - 1]) : null;
+  const next = index < slugs.length - 1 ? getMeta(slugs[index + 1]) : null;
+
+  const filePath = path.join(PROJECT_PATH, `${slug}.mdx`);
+  const source = fs.readFileSync(filePath, "utf8");
+  const { content, data } = matter(source);
+
+  const mdx = await compileMDX({ source: content, options: { parseFrontmatter: false } });
+
+  return {
+    meta: {
       ...(data as any),
       slug,
     },

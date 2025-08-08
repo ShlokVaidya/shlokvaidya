@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import Contact from "@/components/Contact";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,8 +40,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Analytics />
+          <SpeedInsights />
           <Navbar />
-          <div className="pt-16">{children}</div>
+          {children}
+          <hr className="my-2 border-neutral-200 dark:border-neutral-800" />
+          <Contact />
+          <hr className="my-2 border-neutral-200 dark:border-neutral-800" />
           <Footer />
         </ThemeProvider>
       </body>

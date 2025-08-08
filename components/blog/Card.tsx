@@ -2,7 +2,7 @@ import { BlogFrontmatter } from "@/lib/mdx";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function BlogCard({ blog }: { blog: BlogFrontmatter }) {
+export default function Card({ blog }: { blog: BlogFrontmatter }) {
   return (
     <Link href={`/blog/${blog.slug}`} className="group block rounded-xl overflow-hidden shadow hover:shadow-xl transition">
       <div className="relative w-full h-52">

@@ -2,38 +2,38 @@
 
 import { useState, useMemo } from "react";
 import Fuse from "fuse.js";
-import { BlogFrontmatter } from "@/lib/mdx";
+import { ProjectFrontmatter } from "@/lib/mdx";
 import Card from "./Card";
 import { Button } from "@/components/ui/button";
 
 type Props = {
-  blogs: BlogFrontmatter[];
+  projects: ProjectFrontmatter[];
 };
 
-export default function SearchAndFilter({ blogs }: Props) {
+export default function SearchAndFilter({ projects }: Props) {
   const [query, setQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const fuse = useMemo(
     () =>
-      new Fuse(blogs, {
+      new Fuse(projects, {
         keys: ["title", "summary"],
         threshold: 0.3,
       }),
-    [blogs]
+    [projects]
   );
 
-  const allTags = Array.from(new Set(blogs.flatMap((b) => b.tags)));
+  const allTags = Array.from(new Set(projects.flatMap((b) => b.tags)));
 
-  const filteredBlogs = useMemo(() => {
-    let result = query ? fuse.search(query).map((r) => r.item) : blogs;
+  const filteredProjects = useMemo(() => {
+    let result = query ? fuse.search(query).map((r) => r.item) : projects;
 
     if (selectedTag) {
-      result = result.filter((blog) => blog.tags.includes(selectedTag));
+      result = result.filter((project) => project.tags.includes(selectedTag));
     }
 
     return result;
-  }, [fuse, query, selectedTag, blogs]);
+  }, [fuse, query, selectedTag, projects]);
 
   return (
     <div className="space-y-6">
@@ -41,7 +41,7 @@ export default function SearchAndFilter({ blogs }: Props) {
         name="search"
         id="search"
         type="text"
-        placeholder="Search blog posts..."
+        placeholder="Search project posts..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="w-full px-4 py-2 border rounded-md bg-background text-foreground"
@@ -70,10 +70,10 @@ export default function SearchAndFilter({ blogs }: Props) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredBlogs.length > 0 ? (
-          filteredBlogs.map((blog) => <Card key={blog.slug} blog={blog} />)
+        {filteredProjects.length > 0 ? (
+          filteredProjects.map((project) => <Card key={project.slug} project={project} />)
         ) : (
-          <p className="text-muted-foreground">No blog posts found.</p>
+          <p className="text-muted-foreground">No project posts found.</p>
         )}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-type BlogNavProps = {
+type ProjectNavProps = {
   prev?: {
     title: string;
     summary: string;
@@ -14,12 +14,12 @@ type BlogNavProps = {
   };
 };
 
-export function BlogNavigator({ prev, next }: BlogNavProps) {
+export function Navigator({ prev, next }: ProjectNavProps) {
   return (
     <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
       {prev && (
         <Link
-          href={`/blog/${prev.slug}`}
+          href={`/project/${prev.slug}`}
           className="group flex flex-col justify-between border border-muted rounded-2xl p-5 hover:bg-muted/20 transition-all duration-200"
         >
           <div className="flex items-center text-sm text-muted-foreground mb-2">
@@ -39,7 +39,7 @@ export function BlogNavigator({ prev, next }: BlogNavProps) {
 
       {next && (
         <Link
-          href={`/blog/${next.slug}`}
+          href={`/project/${next.slug}`}
           className="group flex flex-col justify-between border border-muted rounded-2xl p-5 hover:bg-muted/20 transition-all duration-200 text-right"
         >
           <div className="flex items-center justify-end text-sm text-muted-foreground mb-2">

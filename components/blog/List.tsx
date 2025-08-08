@@ -12,7 +12,7 @@ type Blog = {
   coverImage: string;
 };
 
-export default function BlogList({ blogs }: { blogs: Blog[] }) {
+export default function List({ blogs }: { blogs: Blog[] }) {
   const [search, setSearch] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
