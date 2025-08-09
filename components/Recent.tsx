@@ -88,11 +88,17 @@ export default function Recent({ blogs, projects }: RecentSectionProps) {
         <hr className="my-12 border-neutral-200 dark:border-neutral-800" />
         <div>
           <h2 className="text-3xl font-bold mb-6">Recent Projects</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => (
-              <RecentItem key={project.slug} item={project} type="project" />
-            ))}
-          </div>
+          {projects.length === 0 ? (
+            <div className="text-center text-neutral-500 dark:text-neutral-400 py-12">
+              No projects available.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects.map((project) => (
+                <RecentItem key={project.slug} item={project} type="project" />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

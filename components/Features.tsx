@@ -32,7 +32,7 @@ export default function Features() {
     {
       title: "Deploy in Seconds",
       description:
-        "With lightning-fast cloud deployment, you can get your AI models live instantly — thanks to our cutting-edge backend infrastructure.",
+        "With lightning-fast cloud deployment, you can get your website live instantly — thanks to Vercel & Neon’s cutting-edge backend infrastructure.",
       skeleton: <SkeletonDeploy />,
       className: "col-span-1 lg:col-span-3 border-b lg:border-none",
     },
@@ -231,6 +231,50 @@ export const SkeletonFetchImages = () => (
 export const SkeletonTools = () => {
   const tools = [
     {
+      name: "Next.js 15",
+      svg: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid"
+          className="w-12 h-12"
+          viewBox="0 0 128 128"
+        >
+          <circle cx="64" cy="64" r="64" />
+          <path
+            fill="url(#a)"
+            d="M106.317 112.014 49.167 38.4H38.4v51.179h8.614v-40.24l52.54 67.884a64.216 64.216 0 0 0 6.763-5.209z"
+          />
+          <path fill="url(#b)" d="M81.778 38.4h8.533v51.2h-8.533z" />
+          <defs>
+            <linearGradient
+              id="a"
+              x1="109"
+              x2="144.5"
+              y1="116.5"
+              y2="160.5"
+              gradientTransform="scale(.71111)"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#fff" />
+              <stop offset="1" stopColor="#fff" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient
+              id="b"
+              x1="121"
+              x2="120.799"
+              y1="54"
+              y2="106.875"
+              gradientTransform="scale(.71111)"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#fff" />
+              <stop offset="1" stopColor="#fff" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+      ),
+    },
+    {
       name: "React",
       svg: (
         <svg
@@ -271,16 +315,18 @@ export const SkeletonTools = () => {
       ),
     },
     {
-      name: "VS Code",
+      name: "GitHub",
       svg: (
-        <Image
-          src="https://cdn.worldvectorlogo.com/logos/visual-studio-code-1.svg"
-          alt="VS Code"
-          width={48}
-          height={48}
-          className="w-12 h-12"
-          loading="lazy"
-        />
+        <svg
+          role="img"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-12 h-12 text-gray-900 dark:text-white"
+        >
+          <title>GitHub</title>
+          <path d="M12 0C5.372 0 0 5.373 0 12a12.003 12.003 0 008.207 11.385c.6.113.82-.26.82-.577v-2.234c-3.338.727-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.09-.745.083-.73.083-.73 1.205.086 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.776.42-1.305.763-1.605-2.665-.3-5.466-1.335-5.466-5.93 0-1.31.467-2.38 1.236-3.22-.124-.3-.536-1.512.117-3.154 0 0 1.01-.324 3.31 1.23a11.46 11.46 0 016.015 0c2.3-1.553 3.31-1.23 3.31-1.23.655 1.642.243 2.854.12 3.154.77.84 1.235 1.91 1.235 3.22 0 4.61-2.803 5.625-5.475 5.922.432.37.82 1.102.82 2.222v3.293c0 .32.216.694.825.575A12.003 12.003 0 0024 12c0-6.627-5.373-12-12-12z" />
+        </svg>
       ),
     },
     {
@@ -322,17 +368,28 @@ export const SkeletonTools = () => {
       ),
     },
     {
-      name: "GitHub",
+      name: "VS Code",
+      svg: (
+        <Image
+          src="https://cdn.worldvectorlogo.com/logos/visual-studio-code-1.svg"
+          alt="VS Code"
+          width={48}
+          height={48}
+          className="w-12 h-12"
+          loading="lazy"
+        />
+      ),
+    },
+    {
+      name: "Vercel",
       svg: (
         <svg
-          role="img"
-          viewBox="0 0 24 24"
-          fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 128 128"
+          preserveAspectRatio="xMidYMid"
           className="w-12 h-12 text-gray-900 dark:text-white"
         >
-          <title>GitHub</title>
-          <path d="M12 0C5.372 0 0 5.373 0 12a12.003 12.003 0 008.207 11.385c.6.113.82-.26.82-.577v-2.234c-3.338.727-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.09-.745.083-.73.083-.73 1.205.086 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.776.42-1.305.763-1.605-2.665-.3-5.466-1.335-5.466-5.93 0-1.31.467-2.38 1.236-3.22-.124-.3-.536-1.512.117-3.154 0 0 1.01-.324 3.31 1.23a11.46 11.46 0 016.015 0c2.3-1.553 3.31-1.23 3.31-1.23.655 1.642.243 2.854.12 3.154.77.84 1.235 1.91 1.235 3.22 0 4.61-2.803 5.625-5.475 5.922.432.37.82 1.102.82 2.222v3.293c0 .32.216.694.825.575A12.003 12.003 0 0024 12c0-6.627-5.373-12-12-12z" />
+          <path d="M64.002 8.576 128 119.424H0Zm0 0" fill="currentColor" />
         </svg>
       ),
     },
@@ -394,50 +451,6 @@ export const SkeletonTools = () => {
       ),
     },
     {
-      name: "Next.js 15",
-      svg: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="xMidYMid"
-          className="w-12 h-12"
-          viewBox="0 0 128 128"
-        >
-          <circle cx="64" cy="64" r="64" />
-          <path
-            fill="url(#a)"
-            d="M106.317 112.014 49.167 38.4H38.4v51.179h8.614v-40.24l52.54 67.884a64.216 64.216 0 0 0 6.763-5.209z"
-          />
-          <path fill="url(#b)" d="M81.778 38.4h8.533v51.2h-8.533z" />
-          <defs>
-            <linearGradient
-              id="a"
-              x1="109"
-              x2="144.5"
-              y1="116.5"
-              y2="160.5"
-              gradientTransform="scale(.71111)"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stopColor="#fff" />
-              <stop offset="1" stopColor="#fff" stopOpacity="0" />
-            </linearGradient>
-            <linearGradient
-              id="b"
-              x1="121"
-              x2="120.799"
-              y1="54"
-              y2="106.875"
-              gradientTransform="scale(.71111)"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stopColor="#fff" />
-              <stop offset="1" stopColor="#fff" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-        </svg>
-      ),
-    },
-    {
       name: "Cloudinary",
       svg: (
         <svg
@@ -456,19 +469,6 @@ export const SkeletonTools = () => {
               fill="#3448C5"
             />
           </g>
-        </svg>
-      ),
-    },
-    {
-      name: "Vercel",
-      svg: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 128 128"
-          preserveAspectRatio="xMidYMid"
-          className="w-12 h-12 text-gray-900 dark:text-white"
-        >
-          <path d="M64.002 8.576 128 119.424H0Zm0 0" fill="currentColor" />
         </svg>
       ),
     },

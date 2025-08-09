@@ -61,7 +61,7 @@ export default function Spotlight() {
             Blogs
           </Link>
           <Link
-            href="/projects"
+            href="/project"
             className="px-6 py-2 rounded-lg border-2 border-primary text-primary font-semibold bg-transparent hover:bg-primary/10 dark:border-white dark:text-white dark:hover:bg-white/10 transition-colors duration-300 transform transition-transform hover:-translate-y-1 hover:shadow-lg"
           >
             Projects

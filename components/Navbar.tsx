@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { FloatingNav } from "@/components/ui/floating-navbar";
-import { House, Library, FileUser, FolderCode } from "lucide-react";
+import { House, Library, FolderCode } from "lucide-react";
 
 export function Navbar() {
   const navItems = [
@@ -26,12 +26,6 @@ export function Navbar() {
       icon: (
         <FolderCode className="h-4 w-4 text-neutral-500 dark:text-white" />
       ),
-    },
-    {
-      name: "Resume",
-      link: "/",
-      "aria-label": "Resume",
-      icon: <FileUser className="h-4 w-4 text-neutral-500 dark:text-white" />,
     },
   ];
 

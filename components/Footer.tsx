@@ -56,21 +56,21 @@ export function Footer() {
           </p>
           <div className="flex gap-4 mt-4">
             <Link
-              href="https://github.com/"
+              href="https://github.com/ShlokVaidya"
               target="_blank"
               aria-label="GitHub"
             >
               <Github className="w-5 h-5 hover:text-primary transition-colors" />
             </Link>
             <Link
-              href="https://twitter.com/"
+              href="https://x.com/shlok0275"
               target="_blank"
               aria-label="Twitter"
             >
               <Twitter className="w-5 h-5 hover:text-primary transition-colors" />
             </Link>
             <Link
-              href="https://linkedin.com/"
+              href="https://www.linkedin.com/in/shlok-vaidya-0b5a5b275/"
               target="_blank"
               aria-label="LinkedIn"
             >
@@ -93,6 +93,14 @@ export function Footer() {
                 className="hover:text-primary transition-colors"
               >
                 Blog
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/project"
+                className="hover:text-primary transition-colors"
+              >
+                Project
               </Link>
             </li>
             <li>

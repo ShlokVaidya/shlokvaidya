@@ -22,7 +22,7 @@ export default function ContactPage() {
   };
 
   return (
-    <section className="max-w-2xl mx-auto py-20 px-4">
+    <section className="max-w-2xl mx-auto py-20 px-4" id="contact">
       <div className="mb-10 text-center">
         <h1 className="text-4xl font-extrabold mb-2 text-primary">Contact Me</h1>
         <p className="text-lg text-neutral-600 dark:text-neutral-400">
