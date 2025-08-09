@@ -25,8 +25,10 @@ export function getRecentBlogs(limit = 3) {
 
 export function getRecentProjects(limit = 3) {
   const projectsDir = path.join(process.cwd(), "content", "projects");
+  if (!fs.existsSync(projectsDir)) {
+    return []; // Directory does not exist, return empty array
+  }
   const files = fs.readdirSync(projectsDir);
-  // np@typescript-eslint/no-explicit-any
   const projects = files
     .map((file) => {
       const filePath = path.join(projectsDir, file);

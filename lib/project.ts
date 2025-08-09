@@ -14,8 +14,12 @@ export type ProjectFrontmatter = {
   tags: string[];
 };
 
-export function getAllProjects(): ProjectFrontmatter[] {
-  const files = fs.readdirSync(PROJECT_PATH).filter(file => file.endsWith(".mdx"));
+export function getAllProjects() {
+  const projectsDir = path.join(process.cwd(), "content", "projects");
+  if (!fs.existsSync(projectsDir)) {
+    return [];
+  }
+  const files = fs.readdirSync(projectsDir).filter(file => file.endsWith(".mdx"));
 
   const projects = files.map((fileName) => {
     const filePath = path.join(PROJECT_PATH, fileName);
