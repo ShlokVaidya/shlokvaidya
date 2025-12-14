@@ -13,21 +13,21 @@ export default function Features() {
         "Explore the powerful tools and programs I used to craft this website — from design to deployment.",
       skeleton: <SkeletonTools />,
       className:
-        "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
+        "col-span-1 lg:col-span-4 border-b lg:border-r border-border",
     },
     {
       title: "About Me",
       description:
         "I'm Shlok, a passionate developer who built this portfolio from scratch using modern tools like Next.js, Tailwind CSS, and MDX. I love turning ideas into clean, performant, and elegant websites.",
       skeleton: <SkeletonAboutMe />,
-      className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
+      className: "border-b col-span-1 lg:col-span-2 border-border",
     },
     {
       title: "Fetch optimized images from Cloudinary",
       description:
         "Images are securely fetched from Cloudinary’s global CDN with automatic resizing, compression, and modern formats for fast loading, boosting SEO by improving page speed.",
       skeleton: <SkeletonFetchImages />,
-      className: "col-span-1 lg:col-span-3 lg:border-r dark:border-neutral-800",
+      className: "col-span-1 lg:col-span-3 lg:border-r border-border",
     },
     {
       title: "Deploy in Seconds",
@@ -40,23 +40,25 @@ export default function Features() {
 
   return (
     <section
-      className="relative z-20 py-10 lg:py-40 max-w-7xl mx-auto px-6"
-      id="about"
-    >
+  id="about"
+  className="relative z-20 max-w-7xl mx-auto px-6 py-24"
+>
+  <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-muted/40 to-transparent\" />
+
       <header className="text-center max-w-4xl mx-auto mb-16">
         <h2
           id="about-features"
-          className="text-4xl lg:text-6xl font-semibold tracking-tight text-black dark:text-white"
+          className="text-4xl lg:text-6xl font-semibold tracking-tight text-foreground"
         >
           About Me &amp; Features
         </h2>
-        <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
+        <p className="mt-4 text-lg text-muted-foreground">
           Explore the key features of my portfolio and what I bring to the table
           as a developer.
         </p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 rounded-md xl:border dark:border-neutral-800">
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 rounded-md xl:border border-border\">
         {features.map((feature) => (
           <FeatureCard key={feature.title} className={feature.className}>
             <FeatureTitle>{feature.title}</FeatureTitle>
@@ -79,7 +81,7 @@ const FeatureCard = ({
   return (
     <article
       className={cn(
-        "p-6 sm:p-8 relative overflow-hidden bg-white dark:bg-neutral-900 rounded-lg shadow-md",
+        "p-6 sm:p-8 relative overflow-hidden bg-card rounded-lg shadow-md",
         className
       )}
     >
@@ -90,7 +92,7 @@ const FeatureCard = ({
 
 const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
   return (
-    <h3 className="max-w-5xl mx-auto text-left tracking-tight text-black dark:text-white text-2xl font-semibold">
+    <h3 className="max-w-5xl mx-auto text-left tracking-tight text-foreground text-2xl font-semibold\">
       {children}
     </h3>
   );
@@ -101,7 +103,7 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
     <p
       className={cn(
         "text-sm md:text-base max-w-4xl text-left mx-auto mt-2",
-        "text-neutral-600 dark:text-neutral-400"
+        "text-muted-foreground"
       )}
     >
       {children}
@@ -127,7 +129,7 @@ export const SkeletonAboutMe = () => (
       width="80"
       height="120"
       rx="12"
-      fill="#3B82F6"
+      fill="currentColor"
       opacity="0.15"
     />
     <rect
@@ -136,7 +138,7 @@ export const SkeletonAboutMe = () => (
       width="64"
       height="16"
       rx="4"
-      fill="#2563EB"
+      fill="currentColor"
       opacity="0.6"
     />
     <rect
@@ -145,7 +147,7 @@ export const SkeletonAboutMe = () => (
       width="64"
       height="8"
       rx="3"
-      fill="#2563EB"
+      fill="currentColor"
       opacity="0.4"
     />
     <rect
@@ -154,14 +156,14 @@ export const SkeletonAboutMe = () => (
       width="64"
       height="8"
       rx="3"
-      fill="#2563EB"
+      fill="currentColor"
       opacity="0.4"
     />
-    <circle cx="40" cy="58" r="6" fill="#2563EB" opacity="0.6" />
-    <circle cx="40" cy="72" r="6" fill="#2563EB" opacity="0.6" />
+    <circle cx="40" cy="58" r="6" fill="currentColor" opacity="0.6" />
+    <circle cx="40" cy="72" r="6" fill="currentColor" opacity="0.6" />
     <path
       d="M98 104l12-12M98 92l12 12"
-      stroke="#2563EB"
+      stroke="currentColor"
       strokeWidth="5"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -185,30 +187,30 @@ export const SkeletonFetchImages = () => (
       width="100"
       height="60"
       rx="14"
-      fill="#10B981"
+      fill="currentColor"
       opacity="0.15"
     />
     <circle
       cx="80"
       cy="80"
       r="26"
-      stroke="#059669"
+      stroke="currentColor"
       strokeWidth="8"
       fill="url(#lensGradient)"
     />
-    <circle cx="80" cy="80" r="16" fill="#34D399" />
+    <circle cx="80" cy="80" r="16" fill="currentColor" opacity="0.8" />
     <rect
       x="110"
       y="45"
       width="12"
       height="20"
       rx="3"
-      fill="#10B981"
+      fill="currentColor"
       opacity="0.7"
     />
     <path
       d="M60 60l-10-12"
-      stroke="#059669"
+      stroke="currentColor"
       strokeWidth="3"
       strokeLinecap="round"
     />

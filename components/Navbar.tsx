@@ -9,14 +9,14 @@ export function Navbar() {
       name: "Home",
       link: "/",
       "aria-label": "Home",
-      icon: <House className="h-4 w-4 text-neutral-500 dark:text-white" />,
+      icon: <House className="h-4 w-4 text-muted-foreground" />,
     },
     {
       name: "Blog",
       link: "/blog",
       "aria-label": "Blog",
       icon: (
-        <Library className="h-4 w-4 text-neutral-500 dark:text-white" />
+        <Library className="h-4 w-4 text-muted-foreground" />
       ),
     },
     {
@@ -24,7 +24,7 @@ export function Navbar() {
       link: "/project",
       "aria-label": "Project",
       icon: (
-        <FolderCode className="h-4 w-4 text-neutral-500 dark:text-white" />
+        <FolderCode className="h-4 w-4 text-muted-foreground" />
       ),
     },
   ];
