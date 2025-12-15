@@ -76,7 +76,7 @@ export function Footer() {
             >
               <Linkedin className="w-5 h-5 hover:text-primary transition-colors" />
             </Link>
-            <Link href="/rss.xml" target="_blank" aria-label="RSS">
+            <Link href="/" target="_blank" aria-label="RSS">
               <Rss className="w-5 h-5 hover:text-primary transition-colors" />
             </Link>
           </div>
