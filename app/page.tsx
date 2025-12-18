@@ -6,7 +6,6 @@ export default function Home() {
     <>
       <Hero />
       <Features />
-      <hr className="my-5 border-border" />
     </>
   );
 }

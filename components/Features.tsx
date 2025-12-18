@@ -1,64 +1,294 @@
 "use client";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import createGlobe from "cobe";
-import { useEffect, useRef } from "react";
+
+interface HackatimeData {
+  total_time: string;
+  daily_average: string;
+  languages: Array<{ name: string; percent: number; text: string }>;
+}
+
+export const LiveHackatimeWidget = () => {
+  const [data, setData] = React.useState<HackatimeData | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    fetch("/api/hackatime")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setData(data);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Failed to connect to Hackatime API.");
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full p-4 animate-pulse">
+        <div className="h-6 bg-muted rounded w-1/2 mb-2" />
+        <div className="h-4 bg-muted rounded w-1/3" />
+        <div className="w-full h-4 bg-muted rounded-full mt-4" />
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full p-4 text-destructive">
+        <p>⚠️ Error loading data.</p>
+        <p className="text-sm text-muted-foreground mt-1">Check your WakaTime API key.</p>
+      </div>
+    );
+  }
+
+  const primaryLang = data.languages[0] || { name: 'Code', percent: 100 };
+
+  return (
+    <div className="flex flex-col justify-center h-full p-6 space-y-4">
+      <div className="flex items-end justify-between">
+        <div className="flex flex-col">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Total Time (Last 7 Days)
+          </p>
+          <h4 className="text-4xl font-extrabold text-foreground mt-1">
+            {data.total_time}
+          </h4>
+        </div>
+        <div className="text-right">
+            <p className="text-sm font-light text-primary">
+                {data.daily_average} / day
+            </p>
+        </div>
+      </div>
+
+      <div className="w-full">
+        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+            Top Languages
+        </p>
+        {data.languages.map((lang) => (
+          <div key={lang.name} className="mt-1">
+            <div className="flex justify-between text-sm">
+              <span className="font-medium text-foreground">{lang.name}</span>
+              <span className="text-muted-foreground">{lang.text} ({lang.percent.toFixed(1)}%)</span>
+            </div>
+            <div className="w-full h-1.5 bg-muted rounded-full mt-1">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
+                style={{ width: `${lang.percent}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
+interface SpotifyTrack {
+  name: string;
+  artist: string;
+  album: string;
+  image: string;
+  url: string;
+  isPlaying: boolean;
+  progress: number;
+  duration: number;
+}
+
+export const NowPlayingWidget = () => {
+  const [track, setTrack] = React.useState<SpotifyTrack | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const fetchTrack = async () => {
+      try {
+        const res = await fetch("/api/spotify");
+        const data = await res.json();
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setTrack(data);
+        }
+      } catch {
+        setError("Failed to load Spotify data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrack();
+    const interval = setInterval(fetchTrack, 10000); // Refresh every 10 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center space-x-4 h-full p-6 animate-pulse">
+        <div className="h-16 w-16 bg-muted rounded-lg" />
+        <div className="flex-1">
+          <div className="h-5 bg-muted rounded w-3/4 mb-2" />
+          <div className="h-4 bg-muted rounded w-1/2" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !track) {
+    return (
+      <div className="flex items-center justify-center h-full p-6 text-muted-foreground">
+        <p className="text-sm text-center">Not playing anything right now.</p>
+      </div>
+    );
+  }
+
+  const progressPercent = (track.progress / track.duration) * 100;
+
+  return (
+    <a
+      href={track.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center space-x-4 h-full p-6 hover:bg-card/60 transition-colors rounded-lg group"
+    >
+      {/* Album Art */}
+      <div className="relative flex-shrink-0">
+        <img
+          src={track.image}
+          alt={track.album}
+          className="h-16 w-16 rounded-lg shadow-lg group-hover:shadow-xl transition-shadow"
+        />
+        {track.isPlaying && (
+          <div className="absolute -bottom-1 -right-1 h-4 w-4 bg-primary rounded-full ring-2 ring-card animate-pulse flex items-center justify-center">
+            <div className="h-1.5 w-1.5 bg-white rounded-full" />
+          </div>
+        )}
+      </div>
+
+      {/* Track Info */}
+      <div className="flex-1 min-w-0">
+        <h4 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+          {track.name}
+        </h4>
+        <p className="text-sm text-muted-foreground truncate">
+          {track.artist}
+        </p>
+        <p className="text-xs text-muted-foreground/70 truncate mt-1">
+          {track.album}
+        </p>
+
+        {/* Progress Bar */}
+        <div className="mt-2 h-1 bg-muted rounded-full overflow-hidden">
+          <div
+            className="h-full bg-primary transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          {Math.floor(track.progress / 60000)}:{String(Math.floor((track.progress % 60000) / 1000)).padStart(2, '0')} / {Math.floor(track.duration / 60000)}:{String(Math.floor((track.duration % 60000) / 1000)).padStart(2, '0')}
+        </p>
+      </div>
+
+      {/* Status Badge */}
+      <div className="flex-shrink-0 text-right">
+        <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+          <span className="h-1.5 w-1.5 bg-primary rounded-full animate-pulse" />
+          {track.isPlaying ? "Playing" : "Paused"}
+        </div>
+      </div>
+    </a>
+  );
+};
 
 export default function Features() {
   const features = [
     {
       title: "Tools & Technologies",
       description:
-        "Explore the powerful tools and programs I used to craft this website — from design to deployment.",
+        "The modern stack that powers this portfolio for speed and scale.",
       skeleton: <SkeletonTools />,
       className:
-        "col-span-1 lg:col-span-4 border-b lg:border-r border-border",
+        "col-span-1 lg:col-span-2 border-b lg:border-r border-border min-h-[300px]",
     },
     {
-      title: "About Me",
+      title: "Featured Project: E-Commerce API",
       description:
-        "I'm Shlok, a passionate developer who built this portfolio from scratch using modern tools like Next.js, Tailwind CSS, and MDX. I love turning ideas into clean, performant, and elegant websites.",
-      skeleton: <SkeletonAboutMe />,
-      className: "border-b col-span-1 lg:col-span-2 border-border",
+        "Explore a full-stack project built with Next.js, Neon (Postgres), and Serverless functions.",
+      // Replace with a real project component later
+      skeleton: (
+        <div className="flex items-center justify-center h-full bg-gray-800/20 rounded-lg">
+          <p className="text-sm text-yellow-500">
+            [Interactive Project Demo Placeholder]
+          </p>
+        </div>
+      ),
+      className: "border-b col-span-1 lg:col-span-4 border-border min-h-[300px]",
     },
     {
-      title: "Fetch optimized images from Cloudinary",
+      title: "Live Hackatime",
+      description: "My coding rhythm: what I'm focused on this week.",
+      skeleton: <LiveHackatimeWidget />,
+      className: "col-span-1 lg:col-span-3 border-b lg:border-r border-border min-h-[200px]",
+    },
+    {
+      title: "GitHub Repositories",
+      description: "Recently updated projects from my GitHub profile.",
+      skeleton: <GitHubRepoGrid username="ShlokVaidya" limit={3} />,
+      className: "col-span-1 lg:col-span-3 border-b border-border min-h-[200px]",
+    },
+    {
+      title: "Fetch Optimized Images (Cloudinary)",
       description:
-        "Images are securely fetched from Cloudinary’s global CDN with automatic resizing, compression, and modern formats for fast loading, boosting SEO by improving page speed.",
+        "Images delivered globally, automatically compressed and optimized for fast loading.",
       skeleton: <SkeletonFetchImages />,
-      className: "col-span-1 lg:col-span-3 lg:border-r border-border",
+      className: "col-span-1 lg:col-span-4 border-b lg:border-r border-border min-h-[250px]",
     },
     {
-      title: "Deploy in Seconds",
+      title: "Now Playing",
+      description: "What's in my headphones right now.",
+      skeleton: <NowPlayingWidget />,
+      className: "col-span-1 lg:col-span-2 border-b border-border min-h-[250px]",
+    },
+    {
+      title: "Deploy in Seconds (Vercel & Neon)",
       description:
-        "With lightning-fast cloud deployment, you can get your website live instantly — thanks to Vercel & Neon’s cutting-edge backend infrastructure.",
+        "Global edge deployment and scalable PostgreSQL backend infrastructure.",
       skeleton: <SkeletonDeploy />,
-      className: "col-span-1 lg:col-span-3 border-b lg:border-none",
+      className: "col-span-1 lg:col-span-6 border-b lg:border-none",
     },
   ];
 
   return (
     <section
-  id="about"
-  className="relative z-20 max-w-7xl mx-auto px-6 py-24"
->
-  <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-muted/40 to-transparent\" />
+      id="about"
+      className="relative z-20 max-w-7xl mx-auto px-6 py-24"
+    >
+      <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-muted/40 to-transparent" />
 
       <header className="text-center max-w-4xl mx-auto mb-16">
         <h2
           id="about-features"
           className="text-4xl lg:text-6xl font-semibold tracking-tight text-foreground"
         >
-          About Me &amp; Features
+          Developer Snapshot &amp; Stack
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Explore the key features of my portfolio and what I bring to the table
-          as a developer.
+          A live look into my coding activity, projects, and the tools that power this site.
         </p>
       </header>
-
-      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 rounded-md xl:border border-border\">
+      
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-2 rounded-xl xl:border border-border">
         {features.map((feature) => (
           <FeatureCard key={feature.title} className={feature.className}>
             <FeatureTitle>{feature.title}</FeatureTitle>
@@ -92,7 +322,7 @@ const FeatureCard = ({
 
 const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
   return (
-    <h3 className="max-w-5xl mx-auto text-left tracking-tight text-foreground text-2xl font-semibold\">
+    <h3 className="max-w-5xl mx-auto text-left tracking-tight text-foreground text-xl md:text-2xl font-semibold">
       {children}
     </h3>
   );
@@ -100,12 +330,7 @@ const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
 
 const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
   return (
-    <p
-      className={cn(
-        "text-sm md:text-base max-w-4xl text-left mx-auto mt-2",
-        "text-muted-foreground"
-      )}
-    >
+    <p className="text-sm md:text-base max-w-4xl text-left mx-auto mt-2 text-muted-foreground">
       {children}
     </p>
   );
@@ -233,7 +458,7 @@ export const SkeletonFetchImages = () => (
 export const SkeletonTools = () => {
   const tools = [
     {
-      name: "Next.js 15",
+      name: "Next.js 16",
       svg: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -436,16 +661,7 @@ export const SkeletonTools = () => {
               fill="#00E0D9"
             />
             <path
-              d="M0,44.1386667 C0,19.7615542 19.7615542,0 44.1386667,0 L211.861333,0 C236.238446,0 256,19.7615542 256,44.1386667 L256,186.787556 C256,212.003556 224.085333,222.947556 208.611556,203.043556 L160.220444,140.792889 L160.220444,216.277333 C160.220444,238.215556 142.436001,256 120.497778,256 L44.1386667,256 C19.7615542,256 0,236.238446 0,211.861333 L0,44.1386667 Z M44.1386667,35.3137778 C39.2604444,35.3137778 35.3137778,39.2604444 35.3137778,44.1315556 L35.3137778,211.861333 C35.3137778,216.739556 39.2604444,220.693333 44.1315556,220.693333 L121.820444,220.693333 C124.259556,220.693333 124.906667,218.716444 124.906667,216.277333 L124.906667,115.057778 C124.906667,89.8346667 156.821333,78.8906667 172.302222,98.8017778 L220.693333,161.045333 L220.693333,44.1386667 C220.693333,39.2604444 221.148444,35.3137778 216.277333,35.3137778 L44.1386667,35.3137778 Z"
-              fill="url(#linearGradient-1)"
-            />
-            <path
-              d="M0,44.1386667 C0,19.7615542 19.7615542,0 44.1386667,0 L211.861333,0 C236.238446,0 256,19.7615542 256,44.1386667 L256,186.787556 C256,212.003556 224.085333,222.947556 208.611556,203.043556 L160.220444,140.792889 L160.220444,216.277333 C160.220444,238.215556 142.436001,256 120.497778,256 L44.1386667,256 C19.7615542,256 0,236.238446 0,211.861333 L0,44.1386667 Z M44.1386667,35.3137778 C39.2604444,35.3137778 35.3137778,39.2604444 35.3137778,44.1315556 L35.3137778,211.861333 C35.3137778,216.739556 39.2604444,220.693333 44.1315556,220.693333 L121.820444,220.693333 C124.259556,220.693333 124.906667,218.716444 124.906667,216.277333 L124.906667,115.057778 C124.906667,89.8346667 156.821333,78.8906667 172.302222,98.8017778 L220.693333,161.045333 L220.693333,44.1386667 C220.693333,39.2604444 221.148444,35.3137778 216.277333,35.3137778 L44.1386667,35.3137778 Z"
-              fillOpacity="0.4"
-              fill="url(#linearGradient-2)"
-            />
-            <path
-              d="M211.861333,0 C236.238446,0 256,19.7615542 256,44.1386667 L256,186.787556 C256,212.003556 224.085333,222.947556 208.611556,203.043556 L160.220444,140.792889 L160.220444,216.277333 C160.220444,238.215556 142.436001,256 120.497778,256 C121.667088,256 122.788506,255.535493 123.615333,254.708666 C124.44216,253.881839 124.906667,252.760421 124.906667,251.591111 L124.906667,115.057778 C124.906667,89.8346667 156.821333,78.8906667 172.302222,98.8017778 L220.693333,161.045333 L220.693333,8.82488889 C220.693333,3.95377778 216.739556,0 211.861333,0 Z"
+              d="M0,44.1386667 C0,19.7615542 19.7615542,0 44.1386667,0 L211.861333,0 C236.238446,0 256,19.7615542 256,44.1386667 L256,186.787556 C256,212.003556 224.085333,222.947556 208.611556,203.043556 L160.220444,140.792889 L160.220444,216.277333 C160.220444,238.215556 142.436001,256 120.497778,256 C121.667088,256 122.788506,255.535493 123.615333,254.708666 C124.44216,253.881839 124.906667,252.760421 124.906667,251.591111 L124.906667,115.057778 C124.906667,89.8346667 156.821333,78.8906667 172.302222,98.8017778 L220.693333,161.045333 L220.693333,8.82488889 C220.693333,3.95377778 216.739556,0 211.861333,0 Z"
               fill="#63F655"
             />
           </g>
@@ -485,7 +701,7 @@ export const SkeletonTools = () => {
           title={tool.name}
         >
           {tool.svg}
-          <span className="text-xs text-neutral-600 dark:text-neutral-400">
+          <span className="text-xs text-muted-foreground">
             {tool.name}
           </span>
         </div>
@@ -549,5 +765,110 @@ export const Globe = ({ className }: { className?: string }) => {
       style={{ width: 600, height: 600, maxWidth: "100%", aspectRatio: 1 }}
       className={className}
     />
+  );
+};
+
+interface Repo {
+  id: number;
+  name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  stargazers_count: number;
+  forks_count: number;
+  language: string | null;
+  updated_at: string;
+}
+
+export const GitHubRepoGrid = ({ username = "ShlokVaidya", limit = 3 }: { username?: string; limit?: number }) => {
+  const [repos, setRepos] = React.useState<Repo[] | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const run = async () => {
+      try {
+        const res = await fetch(`/api/github?u=${encodeURIComponent(username)}&limit=${limit}`, { cache: "no-store" });
+        const data = await res.json();
+        const list: Repo[] = Array.isArray(data) ? data : data.repos || [];
+        setRepos(list.slice(0, limit));
+      } catch {
+        setError("Failed to load repositories.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    run();
+  }, [username, limit]);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 gap-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="rounded-xl border border-border bg-card/40 p-5 animate-pulse">
+            <div className="h-5 w-2/3 bg-muted rounded mb-3" />
+            <div className="h-4 w-full bg-muted rounded mb-2" />
+            <div className="flex gap-4 mt-4">
+              <div className="h-4 w-16 bg-muted rounded" />
+              <div className="h-4 w-16 bg-muted rounded" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error || !repos?.length) {
+    return (
+      <div className="rounded-xl border border-border bg-card/40 p-8 text-center text-muted-foreground">
+        <p className="text-sm">No repositories found.</p>
+        <a 
+          href={`https://github.com/${username}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:text-primary/80 text-xs mt-2 inline-block transition-colors"
+        >
+          View GitHub Profile →
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {repos.slice(0, 3).map((r) => (
+        <a
+          key={r.id}
+          href={r.html_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group block rounded-xl border border-border bg-card/40 p-5 hover:bg-card/60 hover:border-primary/20 transition-all duration-200"
+        >
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <h4 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors truncate flex-1">
+              {r.name}
+            </h4>
+            <span className="text-xs px-2.5 py-1 rounded-md bg-muted text-muted-foreground whitespace-nowrap">
+              {r.language ?? "Other"}
+            </span>
+          </div>
+          
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+            {r.description || "No description provided."}
+          </p>
+          
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <span>★</span>
+              <span>{r.stargazers_count}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <span>⑂</span>
+              <span>{r.forks_count}</span>
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
   );
 };
