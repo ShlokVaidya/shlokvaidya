@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    client = new Client({ connectionString: process.env.DATABASE_URL });
+    client = new Client({ connectionString: process.env.POSTGRES_URL });
     await client.connect();
 
     // Ensure table exists

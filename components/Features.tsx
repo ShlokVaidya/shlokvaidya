@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import createGlobe from "cobe";
@@ -50,8 +49,6 @@ export const LiveHackatimeWidget = () => {
       </div>
     );
   }
-
-  const primaryLang = data.languages[0] || { name: 'Code', percent: 100 };
 
   return (
     <div className="flex flex-col justify-center h-full p-6 space-y-4">
@@ -105,6 +102,12 @@ interface SpotifyTrack {
   progress: number;
   duration: number;
 }
+
+const formatTime = (ms: number): string => {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
+  return `${minutes}:${seconds}`;
+};
 
 export const NowPlayingWidget = () => {
   const [track, setTrack] = React.useState<SpotifyTrack | null>(null);
@@ -196,7 +199,7 @@ export const NowPlayingWidget = () => {
           />
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          {Math.floor(track.progress / 60000)}:{String(Math.floor((track.progress % 60000) / 1000)).padStart(2, '0')} / {Math.floor(track.duration / 60000)}:{String(Math.floor((track.duration % 60000) / 1000)).padStart(2, '0')}
+          {formatTime(track.progress)} / {formatTime(track.duration)}
         </p>
       </div>
 
@@ -211,6 +214,87 @@ export const NowPlayingWidget = () => {
   );
 };
 
+export const FeaturedProjectShowcase = () => {
+  const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  return (
+    <div
+      className="h-full w-full relative group cursor-pointer"
+      onMouseMove={handleMouseMove}
+    >
+      {/* Gradient background with mouse tracking */}
+      <div
+        className="absolute inset-0 rounded-lg bg-gradient-to-br from-primary/20 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          backgroundPosition: `${mousePos.x}px ${mousePos.y}px`,
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 h-full flex flex-col justify-between p-4">
+        {/* Project Header */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary/40 to-primary/20 rounded-lg flex items-center justify-center border border-primary/30">
+              <span className="text-xs font-bold text-primary">🥧</span>
+            </div>
+            <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+              Pi Cluster Dashboard
+            </h4>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Lightweight control panel for managing Raspberry Pi clusters with real-time monitoring
+          </p>
+        </div>
+
+        {/* Tech Stack Pills */}
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Built with
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {["React", "Node.js", "WebSockets", "Lightweight"].map((tech) => (
+              <span
+                key={tech}
+                className="text-xs px-2 py-1 rounded-md bg-primary/10 text-primary font-medium border border-primary/30 group-hover:border-primary/60 group-hover:bg-primary/20 transition-all"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Stats Footer */}
+        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-border/50 group-hover:border-primary/30 transition-colors">
+          <div className="text-center">
+            <p className="text-lg font-bold text-primary">8+</p>
+            <p className="text-xs text-muted-foreground">Nodes</p>
+          </div>
+          <div className="text-center">
+            <p className="text-lg font-bold text-primary">Real-Time</p>
+            <p className="text-xs text-muted-foreground">Monitoring</p>
+          </div>
+          <div className="text-center">
+            <p className="text-lg font-bold text-primary">Power</p>
+            <p className="text-xs text-muted-foreground">Control</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Animated border */}
+      <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+    </div>
+  );
+};
+
 export default function Features() {
   const features = [
     {
@@ -222,17 +306,10 @@ export default function Features() {
         "col-span-1 lg:col-span-2 border-b lg:border-r border-border min-h-[300px]",
     },
     {
-      title: "Featured Project: E-Commerce API",
+      title: "Featured Project: Pi Cluster Dashboard",
       description:
-        "Explore a full-stack project built with Next.js, Neon (Postgres), and Serverless functions.",
-      // Replace with a real project component later
-      skeleton: (
-        <div className="flex items-center justify-center h-full bg-gray-800/20 rounded-lg">
-          <p className="text-sm text-yellow-500">
-            [Interactive Project Demo Placeholder]
-          </p>
-        </div>
-      ),
+        "Lightweight control panel for Raspberry Pi clusters with power management, status monitoring, and resource usage tracking.",
+      skeleton: <FeaturedProjectShowcase />,
       className: "border-b col-span-1 lg:col-span-4 border-border min-h-[300px]",
     },
     {
@@ -597,13 +674,10 @@ export const SkeletonTools = () => {
     {
       name: "VS Code",
       svg: (
-        <Image
+        <img
           src="https://cdn.worldvectorlogo.com/logos/visual-studio-code-1.svg"
           alt="VS Code"
-          width={48}
-          height={48}
           className="w-12 h-12"
-          loading="lazy"
         />
       ),
     },

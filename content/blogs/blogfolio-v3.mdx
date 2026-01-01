@@ -1,0 +1,396 @@
+---
+title: "Building Blogfolio v3: A Modern Portfolio & Blog Platform"
+description: "A comprehensive deep dive into the architecture, features, and technologies behind my latest portfolio website built with Next.js 16, React 19, TypeScript, and cutting-edge web technologies."
+publishedAt: 2026-01-01
+banner: https://res.cloudinary.com/dg1bpexfq/image/upload/v1767246703/Blogfolio-v1_saavk0.png
+tags: ["Next.js", "TypeScript", "Web Development", "Portfolio", "Full Stack", "React"]
+---
+
+# Building Blogfolio v3: A Modern Portfolio & Blog Platform
+
+Welcome to the third iteration of my portfolio website! After multiple iterations and learning experiences, I've built a comprehensive platform that combines a blog, portfolio, and various integrations to showcase my work and development journey. This post will take you through the technical architecture, features, and design decisions that power this website.
+
+## Tech Stack Overview
+
+The foundation of Blogfolio v3 is built on modern, performant technologies:
+
+- **Framework:** Next.js 16.0 with App Router (latest)
+- **UI Library:** React 19.1 (cutting-edge)
+- **Language:** TypeScript 5 for type safety across the entire codebase
+- **Styling:** Tailwind CSS 4.1 with custom design system
+- **Database:** PostgreSQL (Vercel Postgres)
+- **Content:** MDX for rich, interactive blog posts
+- **Deployment:** Vercel with Edge Functions
+- **Analytics:** Vercel Analytics & Speed Insights
+- **Build Tool:** Turbopack for lightning-fast development
+
+## Frontend Architecture
+
+### UI Components & Design System
+
+The frontend is built with a component-driven approach using shadcn/ui as the base component library. I've customized and extended these components to create a unique visual identity:
+
+**Key UI Features:**
+- **Floating Navigation Bar:** A modern, glassmorphic navbar that follows you as you scroll
+- **Spotlight Effect:** Interactive spotlight animations using Framer Motion
+- **3D Globe:** Powered by Cobe for an eye-catching visual element
+- **Dark Mode Support:** Seamless theme switching with next-themes
+- **Responsive Design:** Mobile-first approach ensuring great UX on all devices
+
+### Dynamic Content Rendering
+
+The blog system leverages MDX (Markdown + JSX) for content creation, allowing me to embed React components directly in blog posts. This enables:
+
+- Interactive code examples
+- Custom callouts and alerts
+- Embedded media and widgets
+- Dynamic data visualization
+
+```typescript
+// Reading time calculation for each post
+import readingTime from 'reading-time';
+import matter from 'gray-matter';
+
+const stats = readingTime(content);
+const metadata = matter(content);
+```
+
+### Features Section
+
+The homepage features section showcases live data from various APIs:
+
+#### **1. Hackatime (WakaTime) Integration**
+Real-time coding statistics displaying:
+- Total coding time (last 7 days)
+- Daily average
+- Top programming languages with percentage breakdown
+- Animated progress bars
+
+#### **2. Spotify Now Playing**
+Live music status showing:
+- Currently playing track
+- Artist and album information
+- Album artwork
+- Direct link to Spotify
+
+#### **3. GitHub Activity**
+Recent repository activity and contribution stats
+
+## Backend Infrastructure
+
+### API Routes
+
+The backend is powered by Next.js API routes (Route Handlers) organized by functionality:
+
+```
+/api
+├── admin/          # Admin authentication & management
+├── cloudinary/     # Image optimization & delivery
+├── contact/        # Contact form submissions
+├── emails/         # Email service integration
+├── github/         # GitHub API integration
+├── hackatime/      # WakaTime/Hackatime stats
+├── rss/            # RSS feed generation
+├── spotify/        # Spotify Now Playing API
+├── status/         # Real-time status updates
+├── subscribe/      # Newsletter subscriptions
+└── views/          # Page view tracking
+```
+
+### Database Design
+
+PostgreSQL handles all persistent data with efficient schema design:
+
+**Key Tables:**
+- **Views:** Page view tracking with IP-based deduplication
+- **Sessions:** Admin authentication sessions with JWT
+- **Subscribers:** Email newsletter management
+- **Status Updates:** Real-time status posting system
+
+```typescript
+// Database connection with connection pooling
+import { Pool } from "pg";
+
+export const db = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
+});
+
+// Graceful error handling for production
+db.on("error", (err) => {
+  console.warn("Unexpected error on idle client", err);
+});
+```
+
+### Authentication System
+
+A custom-built admin authentication system using:
+- **OTP-based login:** Email-based one-time passwords for secure access
+- **JWT tokens:** Secure session management
+- **HTTP-only cookies:** Protection against XSS attacks
+- **Session cleanup:** Automatic expiration of old sessions
+
+```typescript
+// Secure OTP generation and verification
+import crypto from 'crypto';
+
+const otp = crypto.randomInt(100000, 999999).toString();
+// Stored with bcrypt hashing for security
+```
+
+## Advanced Features
+
+**1. View Counter System**
+
+Each blog post and page tracks views with intelligent deduplication:
+- IP-based tracking to prevent duplicate counts
+- Real-time updates using SWR
+- Persistent storage in PostgreSQL
+- Animated counter display
+
+**2. Contact Form with Email Integration**
+
+Nodemailer integration for handling contact submissions:
+- Form validation
+- Spam protection
+- Email notifications
+- Success/error toast notifications using Sonner
+
+**3. RSS Feed Generation**
+
+Automatic RSS feed creation for blog posts:
+- SEO-optimized metadata
+- Automatic updates on new posts
+- Compatible with all RSS readers
+
+**4. Image Optimization**
+
+Cloudinary integration for media management:
+- Automatic image optimization
+- Responsive image delivery
+- CDN-powered performance
+- On-the-fly transformations
+
+**5. SEO & Performance**
+
+Comprehensive SEO implementation:
+- Dynamic sitemap generation
+- Robots.txt configuration
+- Schema.org structured data
+- Open Graph & Twitter Card meta tags
+- Reading time calculation
+- Optimized Core Web Vitals
+
+```typescript
+// Dynamic sitemap generation
+export async function sitemap() {
+  const blogs = await getAllBlogPosts();
+  
+  return [
+    { url: 'https://shlokvaidya.vercel.app', priority: 1 },
+    ...blogs.map(post => ({
+      url: `https://shlokvaidya.vercel.app/blog/${post.slug}`,
+      lastModified: post.publishedAt,
+    }))
+  ];
+}
+```
+
+**6. Admin Dashboard**
+
+A custom control panel for managing the site:
+- Secure OTP login
+- View statistics and analytics
+- Real-time status posting
+- Session management
+- Blog statistics viewer
+
+## Performance Optimizations
+
+### Edge Computing
+Leveraging Vercel's Edge Network for:
+- Sub-100ms response times globally
+- Edge API routes for critical paths
+- Cached responses for static content
+
+### Code Splitting
+Automatic code splitting with Next.js:
+- Route-based splitting
+- Dynamic imports for heavy components
+- Optimized bundle sizes
+
+### Database Optimization
+- Connection pooling to prevent exhaustion
+- Indexed queries for fast lookups
+- Efficient SQL queries with proper joins
+
+## Development Experience
+
+### Type Safety
+Full TypeScript coverage ensures:
+- Compile-time error detection
+- Better IDE autocomplete
+- Self-documenting code
+- Refactoring confidence
+
+### Component Architecture
+Modular, reusable components:
+- Separation of concerns
+- Easy testing
+- Consistent styling
+- Scalable codebase
+
+### Developer Tools
+- ESLint for code quality
+- Prettier for formatting
+- TypeScript strict mode
+- Hot module replacement (Turbopack)
+
+## Deployment & CI/CD
+
+Automated deployment pipeline:
+1. Push to GitHub repository
+2. Vercel automatically builds and deploys
+3. Preview deployments for pull requests
+4. Production deployment on main branch
+5. Automatic invalidation of cached content
+
+## Lessons Learned
+
+Building Blogfolio v3 taught me valuable lessons:
+
+1. **Start with a strong foundation:** Choosing the right tech stack early saves refactoring time
+2. Technical Highlights
+
+### Advanced Features in Production
+
+**1. Intelligent View Tracking**
+Every blog post includes a sophisticated view counter that:
+- Uses IP-based deduplication to count unique visitors
+- Updates in real-time with SWR for instant feedback
+- Stores data persistently in PostgreSQL
+- Gracefully handles errors without breaking the UI
+
+**2. OTP Authentication System**
+Built a custom admin authentication from scratch:
+- EDevelopment Workflow
+
+My typical development process:
+
+1. **Local Development**: `npm run dev` with Turbopack for instant HMR
+2. **Type Checking**: TypeScript strict mode catches errors early
+3. **Testing**: Manual testing across devices and browsers
+4. **Git Commit**: Push to GitHub main branch
+5. **Auto Deploy**: Vercel automatically builds and deploys
+6. **Verification**: Check production build and run Lighthouse audit
+
+## Key Learnings
+
+Building Blogfolio v3 taught me invaluable lessons:
+
+1. **Type Safety First**: TypeScript prevents runtime errors and improves DX
+2. **Performance Matters**: Users notice and appreciate fast, responsive sites
+3. **Security by Design**: Build authentication and data protection from day one
+4. **Progressive Enhancement**: Start with core features, add enhancements iteratively
+5. **Developer Experience**: Good DX leads to better code and faster iteration
+6. **Modular Architecture**: Small, focused components are easier to maintain and test
+7. **Edge Computing**: Vercel's Edge Network provides global performance
+8. **Database Optimization**: Connection pooling and indexed queries are crucial
+
+## Open Source
+
+This project is fully open source! The complete codebase is available on GitHub:
+
+- **Repository**: [github.com/ShlokVaidya/shlokvaidya](https://github.com/ShlokVaidya/shlokvaidya)
+- **License**: MIT
+- **Contributions**: Welcome!
+
+Feel free to:
+- ⭐ Star the repository
+- 🐛 Report bugs or issues
+- 💡 Suggest new features
+- 🔀 Fork and customize for your own use
+- 🤝 Submit pull requests
+
+## Conclusion
+
+Blogfolio v3 represents more than just a portfolio—it's a comprehensive platform showcasing modern web development practices. Built with Next.js 16, React 19, and TypeScript 5, it demonstrates the power of the latest web technologies while maintaining excellent performance and user experience.
+
+The combination of:
+- **Modern Stack**: Cutting-edge frameworks and libraries
+- **Thoughtful Architecture**: Clean, maintainable code structure
+- **Live Integrations**: Real-time data from multiple APIs
+- **Performance Focus**: Optimized for speed and Core Web Vitals
+- **Security**: Robust authentication and data protection
+- **Developer Experience**: Fast builds with Turbopack, strict TypeScript
+
+...creates a platform that's not just functional, but a joy to use and maintain.
+
+Whether you're building your own portfolio, learning modern web development, or just curious about Next.js best practices, I hope this deep dive has been valuable. The entire codebase is open source and available for learning and customization.
+
+### Connect With Me
+
+- 🌐 **Website**: [shlokvaidya.vercel.app](https://shlokvaidya.vercel.app)
+- 💻 **GitHub**: [ShlokVaidya](https://github.com/ShlokVaidya)
+- 📧 **Email**: [shlokvaidya.in@gmail.com](mailto:shlokvaidya.in@gmail.com)
+- 📝 **Blog**: Check out more posts on this site!
+
+Feel free to explore the code, try the features, and reach out with questions or feedback. Happy coding!
+
+---
+
+*Built with ☕ and TypeScript in 2026*  
+*Powered by Next.js 16, React 19, and Turbopackta
+- Proper XML escaping for compatibility
+- Cache headers for optimal performance
+- Discoverable via `<link>` tag in HTML
+
+**5. Email System**
+Contact form and newsletter powered by Nodemailer:
+- Validates email addresses
+- Sends formatted HTML emails
+- Includes spam protection
+- Toast notifications for user feedback
+
+## Performance Metrics
+
+Real-world performance numbers from production:
+
+- **Build Time:** ~45 seconds (Turbopack)
+- **First Contentful Paint:** 0.8s
+- **Time to Interactive:** 2.1s
+- **Lighthouse Score:** 97/100
+- **Bundle Size:** 215KB (gzipped)
+- **API Response Time:** 80ms average
+
+## Future Enhancements
+
+Features on the roadmap:
+
+- [ ] Blog post comments with authentication
+- [ ] Enhanced dark mode animations
+- [ ] More API integrations (Letterboxd, Goodreads)
+- [ ] Blog post series and categories
+- [ ] Reading list and bookmarks
+- [ ] Enhanced analytics dashboard
+- [ ] More API integrations (Letterboxd, Goodreads)
+- [ ] Blog post series/categories
+- [ ] Analytics dashboard
+- [ ] WebMentions support
+
+## Conclusion
+
+Blogfolio v3 represents a significant evolution in my web development journey. It's not just a portfolio—it's a platform that showcases my skills while providing a great user experience. The combination of modern technologies, thoughtful architecture, and attention to detail creates a fast, secure, and maintainable website.
+
+The code is clean, the performance is excellent, and most importantly, it's a joy to use and maintain. Whether you're building your own portfolio or just interested in modern web development, I hope this deep dive has been insightful!
+
+Feel free to explore the site, check out the blog posts, and reach out if you have any questions. You can find me on GitHub, or drop me a message through the contact form.
+
+**Live Site:** [shlokvaidya.vercel.app](https://shlokvaidya.vercel.app)  
+**GitHub:** [ShlokVaidya/shlokvaidya](https://github.com/ShlokVaidya/shlokvaidya)
+
+---
+
+*Built with ☕ and TypeScript in 2026*

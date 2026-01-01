@@ -1,10 +1,25 @@
-import jwt from "jsonwebtoken";
+import { db } from "@/lib/db";
 
-export function verifyAdmin(token?: string) {
+export async function verifyAdmin(token?: string) {
   if (!token) return null;
+  
   try {
-    return jwt.verify(token, process.env.JWT_SECRET!);
-  } catch {
+    const { rows } = await db.query(
+      `
+      SELECT * FROM admin_sessions
+      WHERE token = $1
+        AND expires_at > now()
+      `,
+      [token]
+    );
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    return { role: "admin" };
+  } catch (error) {
+    console.error("Failed to verify admin session:", error);
     return null;
   }
 }

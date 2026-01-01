@@ -1,5 +1,13 @@
 "use client";
 import { useState } from "react";
+import { Mail, Send, CheckCircle, XCircle } from "lucide-react";
+
+const LoadingSpinner = () => (
+  <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+  </svg>
+);
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -17,24 +25,38 @@ export default function ContactPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
-    if (res.ok) setStatus("success");
-    else setStatus("error");
+    if (res.ok) {
+      setStatus("success");
+      setForm({ name: "", email: "", message: "" });
+    } else {
+      setStatus("error");
+    }
   };
 
   return (
-    <section className="max-w-2xl mx-auto py-20 px-4" id="contact">
-      <div className="mb-10 text-center">
-        <h1 className="text-4xl font-extrabold mb-2 text-primary">Contact Me</h1>
-        <p className="text-lg text-neutral-600 dark:text-neutral-400">
-          Have a question, project, or just want to say hi? Fill out the form below and I&apos;ll get back to you soon!
+    <section className="max-w-3xl mx-auto py-24 px-4" id="contact">
+      <div className="mb-12 text-center">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+          <Mail className="h-8 w-8 text-primary" />
+        </div>
+        <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          Let's Connect
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+          Have a question, project idea, or just want to say hi? I'd love to hear from you!
         </p>
       </div>
+      
       <form
         onSubmit={handleSubmit}
-        className="bg-white dark:bg-neutral-900 rounded-2xl shadow-lg p-8 space-y-6 border border-neutral-200 dark:border-neutral-800"
+        className="relative bg-card rounded-2xl shadow-2xl shadow-black/5 p-8 md:p-10 space-y-6 border border-border/50 backdrop-blur-sm overflow-hidden"
       >
-        <div>
-          <label htmlFor="name" className="block text-sm font-semibold mb-1 text-neutral-700 dark:text-neutral-200">
+        {/* Decorative gradient */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10" />
+        
+        <div className="space-y-2">
+          <label htmlFor="name" className="block text-sm font-semibold text-foreground">
             Name
           </label>
           <input
@@ -45,11 +67,12 @@ export default function ContactPage() {
             placeholder="Your Name"
             value={form.name}
             onChange={handleChange}
-            className="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary transition"
+            className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
           />
         </div>
-        <div>
-          <label htmlFor="email" className="block text-sm font-semibold mb-1 text-neutral-700 dark:text-neutral-200">
+        
+        <div className="space-y-2">
+          <label htmlFor="email" className="block text-sm font-semibold text-foreground">
             Email
           </label>
           <input
@@ -60,36 +83,56 @@ export default function ContactPage() {
             placeholder="you@example.com"
             value={form.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary transition"
+            className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
           />
         </div>
-        <div>
-          <label htmlFor="message" className="block text-sm font-semibold mb-1 text-neutral-700 dark:text-neutral-200">
+        
+        <div className="space-y-2">
+          <label htmlFor="message" className="block text-sm font-semibold text-foreground">
             Message
           </label>
           <textarea
             id="message"
             name="message"
             required
-            placeholder="Your Message"
+            placeholder="Tell me about your project or idea..."
             value={form.message}
             onChange={handleChange}
             rows={6}
-            className="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary transition resize-none"
+            className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
           />
         </div>
+        
         <button
           type="submit"
           disabled={status === "loading"}
-          className="w-full bg-primary dark:text-black text-white px-6 py-3 rounded-lg font-semibold text-lg shadow hover:bg-primary/90 transition disabled:opacity-60"
+          className="group w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl font-semibold text-lg shadow-lg shadow-primary/20 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          {status === "loading" ? "Sending..." : "Send Message"}
+          {status === "loading" ? (
+            <>
+              <LoadingSpinner />
+              <span>Sending...</span>
+            </>
+          ) : (
+            <>
+              <span>Send Message</span>
+              <Send className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </>
+          )}
         </button>
+        
         {status === "success" && (
-          <p className="text-green-600 text-center font-medium">Message sent! I&apos;ll get back to you soon.</p>
+          <div className="flex items-center gap-2 p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-600 dark:text-green-400">
+            <CheckCircle className="h-5 w-5 flex-shrink-0" />
+            <p className="font-medium">Message sent! I'll get back to you soon.</p>
+          </div>
         )}
+        
         {status === "error" && (
-          <p className="text-red-600 text-center font-medium">Something went wrong. Please try again.</p>
+          <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-600 dark:text-red-400">
+            <XCircle className="h-5 w-5 flex-shrink-0" />
+            <p className="font-medium">Something went wrong. Please try again.</p>
+          </div>
         )}
       </form>
     </section>

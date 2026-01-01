@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /control/
+
+Sitemap: https://shlokvaidya.com/sitemap.xml
+
+# Crawl delay (time between requests in seconds)
+Crawl-delay: 1

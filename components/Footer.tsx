@@ -76,7 +76,7 @@ export function Footer() {
             >
               <Linkedin className="w-5 h-5 hover:text-primary transition-colors" />
             </Link>
-            <Link href="/" target="_blank" aria-label="RSS">
+            <Link href="/api/rss" target="_blank" aria-label="RSS Feed">
               <Rss className="w-5 h-5 hover:text-primary transition-colors" />
             </Link>
           </div>
@@ -160,6 +160,17 @@ export function Footer() {
               </p>
             )}
           </form>
+          <div className="mt-4 pt-4 border-t border-muted">
+            <p className="text-xs text-muted-foreground mb-2">Or subscribe via RSS:</p>
+            <Link
+              href="/api/rss"
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md bg-muted hover:bg-muted/80 text-foreground transition-colors"
+              target="_blank"
+            >
+              <Rss className="w-4 h-4" />
+              RSS Feed
+            </Link>
+          </div>
         </div>
       </div>
 
