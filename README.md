@@ -1,1 +1,1 @@
-https://github-readme-stats.hackclub.dev/api/wakatime?username=23515&api_domain=hackatime.hackclub.com&&custom_title=Hackatime+Stats&layout=compact&cache_seconds=0&langs_count=8&theme=dark
+![Hackatime Status Bar](https://github-readme-stats.hackclub.dev/api/wakatime?username=23515&api_domain=hackatime.hackclub.com&&custom_title=Hackatime+Stats&layout=compact&cache_seconds=0&langs_count=8&theme=dark)
